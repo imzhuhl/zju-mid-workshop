@@ -60,7 +60,6 @@ def threshold_cluster(file_path):
     return img_seg
 
 
-
 def cluster_2d(file_path):
     img_gray = Image.open(file_path).convert('L')   
     img_gray = np.array(img_gray)
