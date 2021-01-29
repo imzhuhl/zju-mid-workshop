@@ -4,20 +4,23 @@ from sklearn.cluster import KMeans  # 加载Kmeans算法
 import matplotlib.pyplot as plt  # 绘制图像
 from skimage import filters
 from skimage.morphology import disk
+import os
+from skimage import util
 
-def rgb(file_path):
+
+def rgb(img):
     """kmeans: R, G, B
     """
-    img = Image.open(file_path).convert('RGB')
-    img = np.array(img)
-
     h, w = img.shape[0], img.shape[1]
+    dim = 1
+    if len(img.shape) == 3:
+        dim = 3
 
     # 加载 Kmeans 聚类算法
-    km = KMeans(n_clusters=2)
+    km = KMeans(n_clusters=3)
 
     # 聚类获取每个像素所属的类别
-    label = km.fit_predict(img.reshape(-1, 3))
+    label = km.fit_predict(img.reshape(-1, dim))
     label = label.reshape(h, w)
 
     # 创建一张新的灰度图保存聚类后的结果
@@ -29,13 +32,19 @@ def rgb(file_path):
     return img_seg
 
 
-def rgbxy(file_path):
+def rgbxy(img):
     """kmeans: R, G, B, x, y
     """
-    img = Image.open(file_path).convert('RGB')
-    img = np.array(img)
+    # img = Image.open(file_path).convert('RGB')
+    # img = np.array(img)
 
     h, w = img.shape[0], img.shape[1]
+    if len(img.shape) == 3:
+        dim = 3
+    else:
+        dim = 1
+        img = img[:, :, np.newaxis]
+
 
     xy_img = np.zeros((h, w, 2), dtype=np.uint8)
     for i in range(h):
@@ -47,10 +56,10 @@ def rgbxy(file_path):
     new_img = np.concatenate((img, xy_img), axis=2)
 
     # 加载 Kmeans 聚类算法
-    km = KMeans(n_clusters=2)
+    km = KMeans(n_clusters=3)
 
     # 聚类获取每个像素所属的类别
-    label = km.fit_predict(new_img.reshape(-1, 5))
+    label = km.fit_predict(new_img.reshape(-1, dim+2))
     label = label.reshape(h, w)
 
     # 创建一张新的灰度图保存聚类后的结果
@@ -62,16 +71,16 @@ def rgbxy(file_path):
     return img_seg
 
 
-def filter_cluster(file_paht):
-    img = Image.open(file_path).convert('L')
-    img = np.array(img)
+def filter_cluster(img):
+    # img = Image.open(file_path).convert('L')
+    # img = np.array(img)
 
-    img = filters.median(img,disk(5))
+    img = filters.median(img, disk(5))
 
     h, w = img.shape[0], img.shape[1]
 
     # 加载 Kmeans 聚类算法
-    km = KMeans(n_clusters=2)
+    km = KMeans(n_clusters=3)
 
     # 聚类获取每个像素所属的类别
     label = km.fit_predict(img.reshape(-1, 1))
@@ -87,17 +96,15 @@ def filter_cluster(file_paht):
 
 
 if __name__ == '__main__':
-    file_list = ['lena.png', 'lena_noise.jpg', 'cameraman.jpg', 'dog.png']
-    # file_path = './data/lena.png'
-    file_path = './data/lena_noise.jpg'
-    # file_path = './data/cameraman.jpg'
-    # file_path = './data/dog.png'
-    orig_img = Image.open(file_path).convert('RGB')
+    file_list = ['lena.png', 'lena_noise.jpg', 'cameraman.jpg', 'dog.png', 'coins.png', 'yellowlily.jpg', '000011.jpg']
+    file_path = os.path.join('./data', file_list[2])
+    orig_img = Image.open(file_path).convert('L')
     orig_img = np.array(orig_img)
+    # orig_img = util.random_noise(orig_img,mode='s&p')
 
-    rgb_rst = rgb(file_path)
-    rgbxy_rst = rgbxy(file_path)
-    filter_rst = filter_cluster(file_path)
+    rgb_rst = rgb(orig_img.copy())
+    rgbxy_rst = rgbxy(orig_img.copy())
+    filter_rst = filter_cluster(orig_img.copy())
 
     plt.subplot(2, 2, 1)
     plt.title('origin')
@@ -114,9 +121,5 @@ if __name__ == '__main__':
     plt.subplot(2, 2, 4)
     plt.title('mid filter')
     plt.imshow(filter_rst)
-
-    # plt.subplot(2, 2, 4)
-    # plt.title('kmeans rgb sobel')
-    # plt.imshow(rgb_sobel_rst)
 
     plt.show()
