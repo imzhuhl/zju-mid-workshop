@@ -17,7 +17,7 @@ def rgb(img):
         dim = 3
 
     # 加载 Kmeans 聚类算法
-    km = KMeans(n_clusters=3)
+    km = KMeans(n_clusters=2)
 
     # 聚类获取每个像素所属的类别
     label = km.fit_predict(img.reshape(-1, dim))
@@ -56,7 +56,7 @@ def rgbxy(img):
     new_img = np.concatenate((img, xy_img), axis=2)
 
     # 加载 Kmeans 聚类算法
-    km = KMeans(n_clusters=3)
+    km = KMeans(n_clusters=2)
 
     # 聚类获取每个像素所属的类别
     label = km.fit_predict(new_img.reshape(-1, dim+2))
@@ -75,12 +75,12 @@ def filter_cluster(img):
     # img = Image.open(file_path).convert('L')
     # img = np.array(img)
 
-    img = filters.median(img, disk(5))
+    img = filters.median(img[:,:,0], disk(5))
 
     h, w = img.shape[0], img.shape[1]
 
     # 加载 Kmeans 聚类算法
-    km = KMeans(n_clusters=3)
+    km = KMeans(n_clusters=2)
 
     # 聚类获取每个像素所属的类别
     label = km.fit_predict(img.reshape(-1, 1))
@@ -96,9 +96,10 @@ def filter_cluster(img):
 
 
 if __name__ == '__main__':
-    file_list = ['lena.png', 'lena_noise.jpg', 'cameraman.jpg', 'dog.png', 'coins.png', 'yellowlily.jpg', '000011.jpg']
-    file_path = os.path.join('./data', file_list[2])
-    orig_img = Image.open(file_path).convert('L')
+    file_list = ['lena.png', 'lena_noise.jpg', 'cameraman.jpg', 'dog.png', 'coins.png', 'yellowlily.jpg', '000186.jpg', '000243.jpg',
+        '000681.jpg', '000846.jpg']
+    file_path = os.path.join('./data', file_list[9])
+    orig_img = Image.open(file_path).convert('RGB')
     orig_img = np.array(orig_img)
     # orig_img = util.random_noise(orig_img,mode='s&p')
 
