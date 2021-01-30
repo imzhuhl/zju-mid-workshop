@@ -1,3 +1,4 @@
+import os
 import time as time
 import numpy as np
 import scipy as sp
@@ -9,7 +10,9 @@ from sklearn.cluster import AgglomerativeClustering
 
 if __name__ == '__main__':
     # load image
-    file_path = './data/cameraman.jpg'
+    file_list = ['lena.png', 'lena_noise.jpg', 'cameraman.jpg', 'dog.png', 'coins.png', 'yellowlily.jpg', '000186.jpg', '000243.jpg',
+        '000681.jpg', '000846.jpg']
+    file_path = os.path.join('./data', file_list[4])
     img_gray = Image.open(file_path).convert('L')
     img_gray = np.array(img_gray)
     X = np.reshape(img_gray, (-1, 1))

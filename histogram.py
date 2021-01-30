@@ -19,14 +19,14 @@ def threshold_double_peak(file_path):
     hist, bins = np.histogram(img_gray.flatten(), bins=256, range=(0, 256))
 
     # draw histogram
-    # plt.hist(img_gray.flatten(), 256, [0, 256])
-    # plt.show()
+    plt.hist(img_gray.flatten(), 256, [0, 256])
+    plt.show()
 
     # min_idx = np.argmin(hist[ia:ib+1])
     # min_idx += ia
 
     # threshold = min_idx
-    threshold = 90
+    threshold = 70
     print('threshold = {}'.format(threshold))
 
     img_seg = img_gray.copy()
@@ -43,8 +43,8 @@ def threshold_cluster(file_path):
     hist, bins = np.histogram(img_gray.flatten(), bins=256, range=(0, 256))
 
     # draw histogram
-    # plt.hist(img_gray.flatten(), 256, [0, 256])
-    # plt.show()
+    plt.hist(img_gray.flatten(), 256, [0, 256])
+    plt.show()
 
     # min_idx = np.argmin(hist[ia:ib+1])
     # min_idx += ia
@@ -83,9 +83,9 @@ def cluster_2d(file_path):
 
 
 if __name__ == '__main__':
-    # file_path = './data/lena.png'
+    file_path = './data/lena.png'
     # file_path = './data/lena_noise.jpg'
-    file_path = './data/coins.png'
+    # file_path = './data/coins.png'
 
     img_gray = Image.open(file_path).convert('L')   
     img_gray = np.array(img_gray)

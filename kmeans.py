@@ -2,8 +2,7 @@ import numpy as np
 from PIL import Image  # 加载PIL包，用于加载创建图片
 from sklearn.cluster import KMeans  # 加载Kmeans算法
 import matplotlib.pyplot as plt  # 绘制图像
-from skimage import filters
-from skimage.morphology import disk
+from scipy.ndimage import gaussian_filter
 import os
 from skimage import util
 
@@ -75,7 +74,7 @@ def filter_cluster(img):
     # img = Image.open(file_path).convert('L')
     # img = np.array(img)
 
-    img = filters.median(img[:,:,0], disk(5))
+    img = gaussian_filter(img, sigma=1)
 
     h, w = img.shape[0], img.shape[1]
 
@@ -83,7 +82,7 @@ def filter_cluster(img):
     km = KMeans(n_clusters=2)
 
     # 聚类获取每个像素所属的类别
-    label = km.fit_predict(img.reshape(-1, 1))
+    label = km.fit_predict(img.reshape(-1, 3))
     label = label.reshape(h, w)
 
     # 创建一张新的灰度图保存聚类后的结果
@@ -96,31 +95,38 @@ def filter_cluster(img):
 
 
 if __name__ == '__main__':
-    file_list = ['lena.png', 'lena_noise.jpg', 'cameraman.jpg', 'dog.png', 'coins.png', 'yellowlily.jpg', '000186.jpg', '000243.jpg',
-        '000681.jpg', '000846.jpg']
-    file_path = os.path.join('./data', file_list[9])
+    file_list = ['lena.png', 'lena_noise.jpg', 'cameraman.jpg', 'dog.png', 'coins.png', 'yellowlily.jpg', 'jet.jpg','chocolate.jpg']
+    file_path = os.path.join('./data', file_list[0])
     orig_img = Image.open(file_path).convert('RGB')
     orig_img = np.array(orig_img)
     # orig_img = util.random_noise(orig_img,mode='s&p')
 
-    rgb_rst = rgb(orig_img.copy())
-    rgbxy_rst = rgbxy(orig_img.copy())
-    filter_rst = filter_cluster(orig_img.copy())
+    orig_img = orig_img.astype(np.float64)
+    noise = np.random.normal(0, 25, orig_img.shape)
+    orig_img += noise
+    orig_img = np.clip(orig_img, 0, 255.0)
+    orig_img = orig_img.astype(np.uint8)
 
-    plt.subplot(2, 2, 1)
-    plt.title('origin')
+    orig_img = gaussian_filter(orig_img, sigma=0.5)
+
+    # rgb_rst = rgb(orig_img.copy())
+    # rgbxy_rst = rgbxy(orig_img.copy())
+    # filter_rst = filter_cluster(orig_img.copy())
+
+    # plt.subplot(1, 2, 1)
+    # plt.title('origin')
     plt.imshow(orig_img)
 
-    plt.subplot(2, 2, 2)
-    plt.title('kmeans rgb')
-    plt.imshow(rgb_rst)
+    # plt.subplot(1, 2, 2)
+    # plt.title('kmeans rgb')
+    # plt.imshow(rgb_rst)
 
-    plt.subplot(2, 2, 3)
-    plt.title('kmeans rgbxy')
-    plt.imshow(rgbxy_rst)
+    # plt.subplot(2, 2, 3)
+    # plt.title('kmeans rgbxy')
+    # plt.imshow(rgbxy_rst)
 
-    plt.subplot(2, 2, 4)
-    plt.title('mid filter')
-    plt.imshow(filter_rst)
+    # plt.subplot(2, 2, 4)
+    # plt.title('mid filter')
+    # plt.imshow(filter_rst)
 
     plt.show()

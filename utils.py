@@ -47,6 +47,6 @@ def test_show_histogram(file_path):
 if __name__ == '__main__':
     file_path = './data/coins.png'
 
-    # test_add_noise(file_path)
-    test_show_histogram(file_path)
+    test_add_noise(file_path)
+    # test_show_histogram(file_path)
     
