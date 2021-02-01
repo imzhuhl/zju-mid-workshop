@@ -94,32 +94,66 @@ def filter_cluster(img):
     return img_seg
 
 
+def median_filter(img, K_size=3):
+    H, W, C = img.shape
+
+    ## Zero padding
+ 
+    pad = K_size // 2
+ 
+    out = np.zeros((H + pad*2, W + pad*2, C), dtype=np.float)
+ 
+    out[pad:pad+H, pad:pad+W] = img.copy().astype(np.float)
+ 
+    tmp = out.copy()
+ 
+    # filtering
+ 
+    for y in range(H):
+        for x in range(W):
+            for c in range(C):
+                out[pad+y, pad+x, c] = np.median(tmp[y:y+K_size, x:x+K_size, c])
+ 
+    out = out[pad:pad+H, pad:pad+W].astype(np.uint8)
+    return out
+
+
 if __name__ == '__main__':
-    file_list = ['lena.png', 'lena_noise.jpg', 'cameraman.jpg', 'dog.png', 'coins.png', 'yellowlily.jpg', 'jet.jpg','chocolate.jpg']
+    file_list = ['coins_noise.png', 'chocolate_noise.png', 'lena.png', 'lena_noise.jpg', 'cameraman.jpg', 'dog.png', 'coins.png', 'yellowlily.jpg', 'jet.jpg','chocolate.jpg']
     file_path = os.path.join('./data', file_list[0])
-    orig_img = Image.open(file_path).convert('RGB')
+    orig_img = Image.open(file_path).convert('L')
     orig_img = np.array(orig_img)
+    orig_img = orig_img[:,:,np.newaxis]
+    orig_img = median_filter(orig_img)
+    orig_img = orig_img[:, :, 0]
+    
     # orig_img = util.random_noise(orig_img,mode='s&p')
+    # orig_img *= 255.0
+    # orig_img = np.clip(orig_img, 0, 255)
+    # orig_img = orig_img.astype(np.uint8)
 
-    orig_img = orig_img.astype(np.float64)
-    noise = np.random.normal(0, 25, orig_img.shape)
-    orig_img += noise
-    orig_img = np.clip(orig_img, 0, 255.0)
-    orig_img = orig_img.astype(np.uint8)
+    # pil_img = Image.fromarray(orig_img)
+    # pil_img.save('./data/chocolate_noise.png')
 
-    orig_img = gaussian_filter(orig_img, sigma=0.5)
+    # orig_img = orig_img.astype(np.float64)
+    # noise = np.random.normal(0, 25, orig_img.shape)
+    # orig_img += noise
+    # orig_img = np.clip(orig_img, 0, 255.0)
+    # orig_img = orig_img.astype(np.uint8)
 
-    # rgb_rst = rgb(orig_img.copy())
+    # orig_img = gaussian_filter(orig_img, sigma=0.5)
+
+    rgb_rst = rgb(orig_img.copy())
     # rgbxy_rst = rgbxy(orig_img.copy())
     # filter_rst = filter_cluster(orig_img.copy())
 
     # plt.subplot(1, 2, 1)
     # plt.title('origin')
-    plt.imshow(orig_img)
+    # plt.imshow(orig_img, cmap=plt.cm.gray)
 
     # plt.subplot(1, 2, 2)
     # plt.title('kmeans rgb')
-    # plt.imshow(rgb_rst)
+    plt.imshow(rgb_rst)
 
     # plt.subplot(2, 2, 3)
     # plt.title('kmeans rgbxy')

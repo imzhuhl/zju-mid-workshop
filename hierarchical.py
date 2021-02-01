@@ -10,9 +10,8 @@ from sklearn.cluster import AgglomerativeClustering
 
 if __name__ == '__main__':
     # load image
-    file_list = ['lena.png', 'lena_noise.jpg', 'cameraman.jpg', 'dog.png', 'coins.png', 'yellowlily.jpg', '000186.jpg', '000243.jpg',
-        '000681.jpg', '000846.jpg']
-    file_path = os.path.join('./data', file_list[4])
+    file_list = ['lena.png', 'lena_noise.jpg', 'cameraman.jpg', 'dog.png', 'coins.png', 'yellowlily.jpg', 'jet.jpg','chocolate.jpg']
+    file_path = os.path.join('./data', file_list[7])
     img_gray = Image.open(file_path).convert('L')
     img_gray = np.array(img_gray)
     X = np.reshape(img_gray, (-1, 1))
@@ -22,7 +21,7 @@ if __name__ == '__main__':
 
     print("Compute structured hierarchical clustering...")
     st = time.time()
-    n_clusters = 2  # number of regions
+    n_clusters = 6  # number of regions
     ward = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward', connectivity=connectivity).fit(X)
     label = np.reshape(ward.labels_, img_gray.shape)
     print("Elapsed time: ", time.time() - st)
